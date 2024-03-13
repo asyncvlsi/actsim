@@ -1,0 +1,17 @@
+<snk>  snk.I: recv-blocked
+<src>  snk.I : send value: 2 (0x2)
+<snk>  snk.I: recv-wakeup value: 2 (0x2)
+<src>  Source 0: Sent value 2 (0x2)
+<snk>  Sink 0: Received value 2 (0x2)
+<snk>  snk.I: recv-blocked
+<src>  snk.I : send value: 5 (0x5)
+<snk>  snk.I: recv-wakeup value: 5 (0x5)
+<src>  Source 0: Sent value 5 (0x5)
+<snk>  Sink 0: Received value 5 (0x5)
+<snk>  snk.I: recv-blocked
+<src>  snk.I : send value: 11 (0xb)
+<snk>  snk.I: recv-wakeup value: 11 (0xb)
+<src>  Source 0: Sent value 11 (0xb)
+<snk>  Sink 0: Received value 11 (0xb)
+<snk>  snk.I: recv-blocked
+<src>  Source 0: Input file #0 ended.

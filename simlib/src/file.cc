@@ -236,15 +236,15 @@ extern "C" expr_res actsim_file_read(int argc, struct expr_res* args) {
             base = 16;
         }
 
-        // check if base 2
-        if (line.rfind("0b", 0) == 0) {
+        // otherwise check if base 2
+        else if (line.rfind("0b", 0) == 0) {
             // remove the characters and set the base
             line = line.substr(2, std::string::npos);
             base = 2;
         }
 
-        // check if base 8
-        if (line.rfind("0o", 0) == 0) {
+        // otherwise check if base 8
+        else if (line.rfind("0o", 0) == 0) {
             // remove the characters and set the base
             line = line.substr(2, std::string::npos);
             base = 8;
