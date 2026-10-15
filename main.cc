@@ -1702,7 +1702,7 @@ int process_random (int argc, char **argv)
 	return LISP_RET_ERROR;
       }
     }
-    glob_sim->setRandom (atoi (argv[1]), atoi(argv[2]),
+    glob_sim->setRandom (atoi (argv[argc-2]), atoi(argv[argc-1]),
 			 (argc == 4 ? true : false));
   }
   else if (argc == 2) {
