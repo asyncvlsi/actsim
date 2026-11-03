@@ -1218,7 +1218,7 @@ int ChpSim::Step (Event *ev)
 	      }
 	    }
 	    else {
-	      if (!_structure_assign (stmt->u.sendrecv.d, &xchg, ev->getCause())) {
+	      if (xchg.nvals > 0 && !_structure_assign (stmt->u.sendrecv.d, &xchg, ev->getCause())) {
 		_breakpt = 1;
 	      }
 	    }
@@ -1300,7 +1300,7 @@ int ChpSim::Step (Event *ev)
 	  if (stmt->u.sendrecv.is_struct == 0) {
 	    if (type == 0) {
 	      off = getGlobalOffset (id, 0);
-#if 0	    
+#if 0
 	      printf (" [glob=%d]", off);
 #endif
 	      if (chkWatchBreakPt (0, id, off, v, ev->getCause())) {
@@ -1332,7 +1332,7 @@ int ChpSim::Step (Event *ev)
 	    }
 	  }
 	  else {
-	    if (!_structure_assign (stmt->u.sendrecv.d, &vs, ev->getCause(), true)) {
+	    if (vs.nvals > 0 && !_structure_assign (stmt->u.sendrecv.d, &vs, ev->getCause(), true)) {
 	      _breakpt = 1;
 	    }
 	  }
@@ -1695,6 +1695,23 @@ int ChpSim::varSend (int pc, int wakeup, int id, int off, int flavor,
       int idx;
       if (c->sfrag_st == 1) {
 	idx = ACT_METHOD_SET;
+	if (!c->cm->haveSend()) {
+	  if (!c->cm->warnSend()) {
+	    int dy;
+	    fprintf (stderr, "Process %s: channel is missing send method; skipping operations. (`",  _proc ? _proc->getName() : "-global-");
+	    act_connection *x = _sc->getConnFromOffset (_proc, id, 2, &dy);
+	    x->Print (stderr);
+	    fprintf (stderr, "')\n");
+	  }
+	  c->sfrag_st = 0;
+	  if (bidir) {
+	    *xchg = c->data2;
+	    *skipwrite = c->skip_action;
+	    c->skip_action = 0;
+	  }
+	  c->count++;
+	  return 0;
+	}
       }
       else if (c->sfrag_st == 2) {
 	idx = ACT_METHOD_SEND_UP;
@@ -1923,6 +1940,20 @@ int ChpSim::varRecv (int pc, int wakeup, int id, int off, int flavor,
       int idx;
       if (c->rfrag_st == 1) {
 	idx = ACT_METHOD_GET;
+	if (!c->cm->haveRecv()) {
+	  if (!c->cm->warnRecv()) {
+	    int dy;
+	    fprintf (stderr, "Process %s: channel is missing receive method; skipping operations. (`",  _proc ? _proc->getName() : "-global-");
+	    act_connection *x = _sc->getConnFromOffset (_proc, id, 2, &dy);
+	    x->Print (stderr);
+	    fprintf (stderr, "')\n");
+	  }
+	  c->rfrag_st = 0;
+	  (*v) = c->data;
+	  *skipwrite = c->skip_action;
+	  c->skip_action = 0;
+	  return 0;
+	}
       }
       else if (c->rfrag_st == 2) {
 	idx = ACT_METHOD_RECV_UP;

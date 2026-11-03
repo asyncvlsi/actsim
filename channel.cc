@@ -276,7 +276,28 @@ ChanMethods::ChanMethods (Channel *c)
     A_INIT (_ops[i].op);
     _compile (i, c->getMethod (i));
   }
+
+  if (A_LEN (_ops[ACT_METHOD_SET].op) == 0 &&
+      A_LEN (_ops[ACT_METHOD_SEND_UP].op) == 0 &&
+      A_LEN (_ops[ACT_METHOD_SEND_REST].op) == 0) {
+    _havesend = false;
+  }
+  else {
+    _havesend = true;
+  }
+
+  if (A_LEN (_ops[ACT_METHOD_GET].op) == 0 &&
+      A_LEN (_ops[ACT_METHOD_RECV_UP].op) == 0 &&
+      A_LEN (_ops[ACT_METHOD_RECV_REST].op) == 0) {
+    _haverecv = false;
+  }
+  else {
+    _haverecv = true;
+  }
+  _warnrecv = false;
+  _warnsend = false;
 }
+
 
 ChanMethods::~ChanMethods ()
 {
@@ -428,6 +449,7 @@ int ChanMethods::runProbe (ActSimCore *sim,
     return 0;
   }
 }
+
 
 
 int ChanMethods::runMethod (ActSimCore *sim,

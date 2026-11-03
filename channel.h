@@ -168,12 +168,23 @@ public:
 
   /* returns -1 when done, otherwise id for resuming */
   int runMethod (ActSimCore *sim, act_channel_state *ch, int idx, int from);
+
   int runProbe (ActSimCore *sim, act_channel_state *ch, int idx);
+
+  bool haveSend () { return _havesend; }
+  bool haveRecv () { return _haverecv; }
+
+  bool warnSend () { bool x = _warnsend; _warnsend = true; return x; }
+  bool warnRecv () { bool x = _warnrecv; _warnrecv = true; return x; }
   
 private:
   void _compile (int idx, act_chp_lang *hse);
   chan_ops _ops[ACT_NUM_STD_METHODS];
   Channel *_ch;
+
+  bool _havesend, _haverecv;
+  bool _warnrecv;
+  bool _warnsend;
 };
 
 
