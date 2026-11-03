@@ -1,0 +1,2 @@
+WARNING: src<>: substituting chp model (requested prs, not found)
+Process src<>: channel is missing send method; blocking. (channel `x')

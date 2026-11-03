@@ -1218,7 +1218,7 @@ int ChpSim::Step (Event *ev)
 	      }
 	    }
 	    else {
-	      if (xchg.nvals > 0 && !_structure_assign (stmt->u.sendrecv.d, &xchg, ev->getCause())) {
+	      if (!_structure_assign (stmt->u.sendrecv.d, &xchg, ev->getCause())) {
 		_breakpt = 1;
 	      }
 	    }
@@ -1332,7 +1332,7 @@ int ChpSim::Step (Event *ev)
 	    }
 	  }
 	  else {
-	    if (vs.nvals > 0 && !_structure_assign (stmt->u.sendrecv.d, &vs, ev->getCause(), true)) {
+	    if (!_structure_assign (stmt->u.sendrecv.d, &vs, ev->getCause(), true)) {
 	      _breakpt = 1;
 	    }
 	  }
@@ -1698,19 +1698,12 @@ int ChpSim::varSend (int pc, int wakeup, int id, int off, int flavor,
 	if (!c->cm->haveSend()) {
 	  if (!c->cm->warnSend()) {
 	    int dy;
-	    fprintf (stderr, "Process %s: channel is missing send method; skipping operations. (`",  _proc ? _proc->getName() : "-global-");
+	    fprintf (stderr, "Process %s: channel is missing send method; blocking. (channel `",  _proc ? _proc->getName() : "-global-");
 	    act_connection *x = _sc->getConnFromOffset (_proc, id, 2, &dy);
 	    x->Print (stderr);
 	    fprintf (stderr, "')\n");
 	  }
-	  c->sfrag_st = 0;
-	  if (bidir) {
-	    *xchg = c->data2;
-	    *skipwrite = c->skip_action;
-	    c->skip_action = 0;
-	  }
-	  c->count++;
-	  return 0;
+	  return 1;
 	}
       }
       else if (c->sfrag_st == 2) {
@@ -1943,16 +1936,12 @@ int ChpSim::varRecv (int pc, int wakeup, int id, int off, int flavor,
 	if (!c->cm->haveRecv()) {
 	  if (!c->cm->warnRecv()) {
 	    int dy;
-	    fprintf (stderr, "Process %s: channel is missing receive method; skipping operations. (`",  _proc ? _proc->getName() : "-global-");
+	    fprintf (stderr, "Process %s: channel is missing receive method; blocking. (channel `",  _proc ? _proc->getName() : "-global-");
 	    act_connection *x = _sc->getConnFromOffset (_proc, id, 2, &dy);
 	    x->Print (stderr);
 	    fprintf (stderr, "')\n");
 	  }
-	  c->rfrag_st = 0;
-	  (*v) = c->data;
-	  *skipwrite = c->skip_action;
-	  c->skip_action = 0;
-	  return 0;
+	  return 1;
 	}
       }
       else if (c->rfrag_st == 2) {
