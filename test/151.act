@@ -1,0 +1,12 @@
+function f_2(int<4> a[1]) : int<4>
+{
+  chp { self := a[0] }
+}
+
+
+defproc test()
+{
+  int<4> a[1];
+  int<4> r;
+  chp { a[0] := 3; r := f_2(a); log("r=", r) }
+}

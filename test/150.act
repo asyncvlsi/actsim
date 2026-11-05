@@ -1,0 +1,11 @@
+function f_1(int<4> a) : int<4>
+{
+  int<4> x[1];
+  chp { x[0] := a; self := x[0] }
+}
+
+defproc test()
+{
+  int<4> r;
+  chp { r := f_1(3); log("r=", r) }
+}

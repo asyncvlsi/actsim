@@ -238,7 +238,7 @@ void expr_multires::_init (Data *d, Array *a)
   else {
     obj_count = 1;
   }
-  if (!d && obj_count == 1) return;
+  if (!d && !a && obj_count == 1) return;
   _d = d;
   _arr = a;
   if (d) {
@@ -247,7 +247,7 @@ void expr_multires::_init (Data *d, Array *a)
   else {
     nvals = obj_count;
   }
-  Assert (d || nvals > 1, "Why am I here?");
+  Assert (d || a || nvals > 1, "Why am I here?");
   MALLOC (v, BigInt, nvals);
   for (int i=0; i < nvals; i++) {
     new (&v[i]) BigInt;
