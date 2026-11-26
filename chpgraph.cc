@@ -651,6 +651,7 @@ static void _free_chp_expr (Expr *e)
 
   case E_CHP_VARCHAN:
   case E_CHP_VARINT:
+  case E_CHP_VARSINT:
   case E_CHP_VARBOOL:
   case E_CHP_CHANSTRUCT_REF:
     break;
@@ -1082,7 +1083,7 @@ static Expr *expr_to_chp_expr (Expr *e, ActSimCore *s, int *flags)
 	      ret->type = E_CHP_VARCHAN;
 	    }
 	    else if (type == 1) {
-	      ret->type = E_CHP_VARINT;
+	      ret->type = TypeFactory::isSIntType (it) ? E_CHP_VARSINT : E_CHP_VARINT;
 	    }
 	    else if (type == 0) {
 	      ret->type = E_CHP_VARBOOL;

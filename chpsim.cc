@@ -560,6 +560,7 @@ int ChpSim::_collect_sharedvars (Expr *e, int pc, int undo)
 
   case E_CHP_VARBOOL:
   case E_CHP_VARINT:
+  case E_CHP_VARSINT:
   case E_VAR:
     // don't need to deal with shared variables here
     // since this is pre-computed
@@ -2614,6 +2615,20 @@ static int _ceil_log2 (int w)
   return i;
 }
 
+/* Helper to change literals to signed form to be used
+    whenever an operation compares a signed variable with a literal */
+static void _signed_literal_fixup (BigInt &l, BigInt &r, Expr *e)
+{
+  if (l.isSigned() && !r.isSigned() && e->u.e.r->type == E_INT) {
+    r.setWidth (r.getWidth() + 1);
+    r.toSigned ();
+  }
+  else if (r.isSigned() && !l.isSigned() && e->u.e.l->type == E_INT) {
+    l.setWidth (l.getWidth() + 1);
+    l.toSigned ();
+  }
+}
+
 BigInt ChpSim::exprEval (Expr *e)
 {
   BigInt l, r;
@@ -2736,6 +2751,7 @@ BigInt ChpSim::exprEval (Expr *e)
   case E_LT:
     l = exprEval (e->u.e.l);
     r = exprEval (e->u.e.r);
+    _signed_literal_fixup (l, r, e);
     if (l < r) {
       l.setWidth (1);
       l.setVal (0, 1);
@@ -2921,6 +2937,12 @@ BigInt ChpSim::exprEval (Expr *e)
   case E_CHP_VARINT:
     l = varEval (e->u.x.val, 1);
     l.setWidth (e->u.x.extra);
+    break;
+
+  case E_CHP_VARSINT:
+    l = varEval (e->u.x.val, 1);
+    l.setWidth (e->u.x.extra);
+    l.toSigned ();
     break;
     
   case E_CHP_VARCHAN:

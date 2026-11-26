@@ -57,6 +57,7 @@
 
 
 #define E_CHP_CHANSTRUCT_REF (E_NEWEND + 13)
+#define E_CHP_VARSINT  (E_NEWEND + 14) 
 
 /*
  *
